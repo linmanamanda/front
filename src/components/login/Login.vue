@@ -1,103 +1,80 @@
 <template>
-  <Card style="width:350px">
-      <p slot="title">
-          <Icon type="ios-film-outline"></Icon>
-          经典电影
-      </p>
-      <ul>
-          <li v-for="item in randomMovieList">
-              <a :href="item.url" target="_blank">{{ item.name }}</a>
-              <span>
-                  <Icon type="ios-star" v-for="n in 4" :key="n"></Icon><Icon type="ios-star" v-if="item.rate >= 9.5"></Icon><Icon type="ios-star-half" v-else></Icon>
-                  {{ item.rate }}
-              </span>
-          </li>
-      </ul>
-  </Card>
+  <div class="login">
+    <h1 class="title">系统登录</h1>
+    <div class="input-group">
+      <i class="iconfont icon-mail_fill"></i>
+      <input type="text" name="email" placeholder="email" v-model="email">
+    </div>
+    <div class="input-group">
+      <i class="iconfont icon-unlock_fill"></i>
+      <input type="password" name="password"
+      placeholder="password" v-model="password">
+    </div>
+    <button>登录</button>
+  </div>
 </template>
+
 <script>
-export default {
-    data () {
-        return {
-            movieList: [
-                {
-                    name: '肖申克的救赎',
-                    url: 'https://movie.douban.com/subject/1292052/',
-                    rate: 9.6
-                },
-                {
-                    name: '这个杀手不太冷',
-                    url: 'https://movie.douban.com/subject/1295644/',
-                    rate: 9.4
-                },
-                {
-                    name: '霸王别姬',
-                    url: 'https://movie.douban.com/subject/1291546/',
-                    rate: 9.5
-                },
-                {
-                    name: '阿甘正传',
-                    url: 'https://movie.douban.com/subject/1292720/',
-                    rate: 9.4
-                },
-                {
-                    name: '美丽人生',
-                    url: 'https://movie.douban.com/subject/1292063/',
-                    rate: 9.5
-                },
-                {
-                    name: '千与千寻',
-                    url: 'https://movie.douban.com/subject/1291561/',
-                    rate: 9.2
-                },
-                {
-                    name: '辛德勒的名单',
-                    url: 'https://movie.douban.com/subject/1295124/',
-                    rate: 9.4
-                },
-                {
-                    name: '海上钢琴师',
-                    url: 'https://movie.douban.com/subject/1292001/',
-                    rate: 9.2
-                },
-                {
-                    name: '机器人总动员',
-                    url: 'https://movie.douban.com/subject/2131459/',
-                    rate: 9.3
-                },
-                {
-                    name: '盗梦空间',
-                    url: 'https://movie.douban.com/subject/3541415/',
-                    rate: 9.2
-                }
-            ],
-            randomMovieList: []
-        }
+  export default {
+    name: 'login',
+    data() {
+      return {
+        email: 'linmanamanda@gmail.com',
+        password: 'linman2491'
+      }
     },
     methods: {
-        changeLimit () {
-            function getArrayItems(arr, num) {
-                const temp_array = [];
-                for (let index in arr) {
-                    temp_array.push(arr[index]);
-                }
-                const return_array = [];
-                for (let i = 0; i<num; i++) {
-                    if (temp_array.length>0) {
-                        const arrIndex = Math.floor(Math.random()*temp_array.length);
-                        return_array[i] = temp_array[arrIndex];
-                        temp_array.splice(arrIndex, 1);
-                    } else {
-                        break;
-                    }
-                }
-                return return_array;
-            }
-            this.randomMovieList = getArrayItems(this.movieList, 5);
-        }
-    },
-    mounted () {
-        this.changeLimit();
+      signin() {
+
+      } 
     }
-}
+  }  
 </script>
+
+<style lang="stylus" scoped>
+.login 
+  position absolute
+  left 0
+  right 0
+  width 400px
+  padding 35px 35px 15px 35px
+  margin 120px auto
+  .title
+    margin 0px auto 40px auto
+    font-size 26px
+    color #eee
+    text-align center
+    font-weight bold
+  .input-group
+    display flex
+    align-items center
+    height 48px
+    border 1px solid rgba(255, 255, 255, 0.1)
+    background rgba(0, 0, 0, 0.1)
+    border-radius 5px
+    padding-left 15px
+    margin-bottom 22px
+    color #454545
+    font-size 14px
+  .iconfont
+    font-size 18px
+    color #889aa4
+  input
+    flex 1
+    padding 12px 15px
+    background-color transparent
+    outline none 
+    border none
+    color #fff
+  input::-webkit-input-placeholder 
+    color #889aa4 
+  button 
+    width 100%
+    padding 10px 15px
+    background-color #4db3ff
+    border-width 0
+    border-color #4db3ff
+    border-radius 4px
+    color #fff
+    font-size 14px
+</style>

@@ -10,5 +10,8 @@ export default {
 }
 </script>
 
-<style>
+<style lang="stylus">
+body {
+  margin 0
+}
 </style>
