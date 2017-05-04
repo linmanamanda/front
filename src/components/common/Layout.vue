@@ -18,7 +18,7 @@
                     </Menu-item>
                     <Submenu name="4">
                         <template slot="title">
-                            <Icon type="android-warning"></Icon>
+                            <Icon type="android-warning" :size="iconSize"></Icon>
                             <span class="layout-text">举报信息管理</span>
                         </template>
                         <Menu-item name="4-1">用户信息举报</Menu-item>
@@ -45,9 +45,7 @@
                     </Breadcrumb>
                 </div>
                 <div class="layout-content">
-                    <div class="layout-content-main">
-                        <router-view></router-view>
-                    </div>
+                    <router-view></router-view>
                 </div>
             </i-col>
         </Row>
@@ -118,7 +116,6 @@
         min-height: 200px;
         margin: 15px;
         overflow: hidden;
-        background: #fff;
         border-radius: 4px;
     }
     .layout-content-main{

@@ -4,6 +4,7 @@ import LoginView from '../views/login/index'
 import WelcomeView from '../views/welcome/index'
 import UserView from '../views/user/index'
 import Layout from '@/components/common/Layout'
+import Table from '@/components/common/Table'
 
 Vue.use(Router)
 
