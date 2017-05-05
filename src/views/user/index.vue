@@ -1,6 +1,7 @@
 <template>
   <div class="user-view">
-    <Table :columns="columns" :data="data" border width="940"></Table>
+    <!-- <Table :columns="columns" :data="data" border width="940"></Table> -->
+    
   </div>
 </template>
 
