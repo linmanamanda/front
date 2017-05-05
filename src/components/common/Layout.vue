@@ -1,24 +1,24 @@
 <template>      
-    <div class="layout" :class="{'layout-hide-text': spanLeft < 5}">
+    <div class="layout">
         <Row type="flex">
-            <i-col :span="spanLeft" class="layout-menu-left">
+            <i-col :span="5" class="layout-menu-left">
                 <Menu active-name="1" theme="dark" width="auto" @on-select="menuSelect">
                     <div class="layout-title">“来相约”系统服务端</div>
                     <Menu-item name="1">
-                        <Icon type="ios-people" :size="iconSize"></Icon>
+                        <Icon type="ios-people" :size="14"></Icon>
                         <span class="layout-text">用户信息管理</span>
                     </Menu-item>
                     <Menu-item name="2">
-                        <Icon type="ios-keypad" :size="iconSize"></Icon>
+                        <Icon type="ios-keypad" :size="14"></Icon>
                         <span class="layout-text">相约信息管理</span>
                     </Menu-item>
                     <Menu-item name="3">
-                        <Icon type="chatbox" :size="iconSize"></Icon>
+                        <Icon type="chatbox" :size="14"></Icon>
                         <span class="layout-text">评论信息管理</span>
                     </Menu-item>
                     <Submenu name="4">
                         <template slot="title">
-                            <Icon type="android-warning" :size="iconSize"></Icon>
+                            <Icon type="android-warning" :size="14"></Icon>
                             <span class="layout-text">举报信息管理</span>
                         </template>
                         <Menu-item name="4-1">用户信息举报</Menu-item>
@@ -26,22 +26,17 @@
                         <Menu-item name="4-3">评论信息举报 </Menu-item>
                     </Submenu>
                     <Menu-item name="5">
-                        <Icon type="stats-bars" :size="iconSize"></Icon>
+                        <Icon type="stats-bars" :size="14"></Icon>
                         <span class="layout-text">数据报表</span>
                     </Menu-item>
                 </Menu>
             </i-col>
-            <i-col :span="spanRight">
+            <i-col :span="19">
                 <div class="layout-header">
-                    <i-button type="text" @click="toggleClick">
-                        <Icon type="navicon" size="32"></Icon>
-                    </i-button>
                 </div>
                 <div class="layout-breadcrumb">
                     <Breadcrumb>
-                        <Breadcrumb-item href="#">首页</Breadcrumb-item>
-                        <Breadcrumb-item href="#">应用中心</Breadcrumb-item>
-                        <Breadcrumb-item>某应用</Breadcrumb-item>
+                        <Breadcrumb-item v-for="(item, index) in breadcrumbList" :href="index !== breadcrumbList.length -1 ? item.href : ''" :key="item.href">{{item.title}}</Breadcrumb-item>
                     </Breadcrumb>
                 </div>
                 <div class="layout-content">
@@ -54,27 +49,16 @@
 
 <script>
     export default {
-        data () {
+        data (){
             return {
-                spanLeft: 5,
-                spanRight: 19
             }
         },
         computed: {
-            iconSize () {
-                return this.spanLeft === 5 ? 14 : 24;
+            breadcrumbList() {
+                return this.$store.state.breadcrumb.breadcrumbList
             }
         },
         methods: {
-            toggleClick () {
-                if (this.spanLeft === 5) {
-                    this.spanLeft = 2;
-                    this.spanRight = 22;
-                } else {
-                    this.spanLeft = 5;
-                    this.spanRight = 19;
-                }
-            },
             menuSelect(name) {
                 switch (name) {
                     case '1': 

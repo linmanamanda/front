@@ -1,0 +1,2 @@
+export const BREADCRUMB_IN = 'BREADCRUMB_IN'
+export const BREADCRUMB_OUT = 'BREADCRUMB_OUT'
