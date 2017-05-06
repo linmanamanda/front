@@ -1,5 +1,5 @@
 <template>
-  <div class="content">
+  <div class="main-content">
     <transition name="fade" mode="out-in">
       <router-view></router-view>
     </transition>
@@ -8,11 +8,11 @@
 
 <script>
   export default {
-    name: 'Content',
+    name: 'MainContent',
   }
 </script>
 
 <style lang="stylus" scoped>
-  .content
+  .main-content
     padding 20px
 </style>

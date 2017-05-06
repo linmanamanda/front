@@ -5,7 +5,7 @@
     </div>
     <div class="main-container">
       <StatusBar></StatusBar>
-      <Content></Content>
+      <MainContent></MainContent>
     </div>
   </div>
 </template>
@@ -13,13 +13,13 @@
 <script>
   import SideBar from './SideBar'
   import StatusBar from './StatusBar'
-  import Content from './Content'
+  import MainContent from './MainContent'
   export default {
     name: 'layout',
     components: {
       SideBar,
       StatusBar,
-      Content
+      MainContent
     },
     computed: {
       isClosed() {

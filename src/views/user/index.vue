@@ -1,7 +1,10 @@
 <template>
   <div class="user-view">
     <div class="filter-container">
-      <el-input placeholder="邮箱" style="width: 200px;"></el-input>
+      <el-input
+        placeholder="邮箱" 
+        style="width: 200px;">
+      </el-input>
 
       <el-input placeholder="用户名" style="width: 150px;"></el-input>
 
@@ -19,8 +22,6 @@
       <el-button type="primary" icon="search">搜索</el-button>
 
       <el-button type="primary" icon="document">导出</el-button>
-
-      <el-checkbox>显示创建时间</el-checkbox>
     </div>
 
     <el-table 
@@ -28,7 +29,9 @@
       style="width: 100%"
       border
       highlight-current-row>
+
       <el-table-column 
+        prop="id"
         label="序号" 
         width="65px"
         align="center">
@@ -37,7 +40,8 @@
         </template>
       </el-table-column>
 
-      <el-table-column 
+      <el-table-column
+        prop="email" 
         label="邮箱"
         min-width="210px"
         align="center">
@@ -45,59 +49,52 @@
       </el-table-column>
 
       <el-table-column 
+        prop="username"
         label="用户名"
         align="center">
           <template scope="scope">{{scope.row.username}}</template>
       </el-table-column>
 
       <el-table-column 
+        prop="authority"
         label="权限"
         width="110px"
         align="center">
           <template scope="scope">
             <el-tag
-              type="grey"
-              v-if="scope.row.authority == 0"
-            >普通用户</el-tag>
-            <el-tag
-              type="success"
-              v-else-if="scope.row.authority == 1"
-            >管理员</el-tag>
-            <el-tag
-              type="warning"
-              v-else-if="scope.row.authority == 2"
-            >超级管理员</el-tag>
+              :type="scope.row.authority | authorityTypeFilter"
+            >{{scope.row.authority | authorityFilter}}</el-tag>
           </template>
       </el-table-column>
 
       <el-table-column 
+        prop="status"
         label="状态"
         width="70px"
         align="center">
           <template scope="scope">
-            <el-tag
-              v-if="scope.row.state == 0"
-              type="success"
-            >正常</el-tag>
-            <el-tag
-              v-else-if="scope.row.state == 1"
-              type="danger"
-            >异常</el-tag>
+            <el-tag :type="scope.row.status | statusTypeFilter">{{scope.row.status | statusFilter}}</el-tag>
           </template>
       </el-table-column>
 
       <el-table-column 
+        prop="updatedAt"
         label="最新修改时间"
+        sortable
         width="180px"
-        align="center">
-          <template scope="scope">{{scope.row.updateAt}}</template>
+        align="center"
+        >
+          <template scope="scope">{{scope.row.updatedAt}}</template>
       </el-table-column>
 
       <el-table-column 
+        prop="createdAt"
         label="创建时间"
+        sortable
         width="180px"
-        align="center">
-          <template scope="scope">{{scope.row.createAt}}</template>
+        align="center"
+        >
+          <template scope="scope">{{scope.row.createdAt}}</template>
       </el-table-column>
 
       <el-table-column
@@ -106,83 +103,101 @@
         align="center"
       >
         <template scope="scope">
-          <el-button type="warning" size="small">修改</el-button>
-          <el-button type="danger" size="small">删除</el-button>
+          <el-button 
+            type="warning" 
+            size="small"
+            @click="handleModification(scope.row)"
+            >修改</el-button>
+          <el-button 
+            type="danger" 
+            size="small"
+            @click="deletionDialogVisiable = true"
+            >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
+
+
+    <el-dialog
+      title="提示"
+      :visible="deletionDialogVisiable"
+      size="tiny"
+      >
+      <span>这是一段信息</span>
+      <!-- <span slot="footer" class="dialog-footer">
+        <el-button @click="deletionDialogVisiable = false">取 消</el-button>
+        <el-button type="primary" @click="deletionDialogVisiable = false">确 定</el-button>
+      </span> -->
+    </el-dialog>
   </div>
 </template>
 
 <script>
   const mocklist = [
-  {
-    id: 1,
-    email: 'linmanamanda@gmail.com',
-    username: 'linman',
-    authority: '2',
-    state: '0',
-    updateAt: '2017-05-04 19:18',
-    createAt: '2017-05-04 19:18',
-     
-  },
-  {
-    id: 2,
-    email: 'whitehairpin@snh48.com',
-    username: 'liyitong',
-    authority: '0',
-    state: '0',
-    updateAt: '1995-12-23 00:00',
-    createAt: '1995-12-23 00:00'
-  },
-  {
-    id: 3,
-    email: 'kotete@snh48.com',
-    username: 'huangtingting',
-    authority: '0',
-    state: '0',
-    updateAt: '1992-09-08 00:00',
-    createAt: '1992-09-08 00:00'
-  },
-  {
-    id: 4,
-    email: 'kh@snh48.com',
-    username: 'khgay',
-    authority: '1',
-    state: '1',
-    updateAt: '2017-01-11 00:00',
-    createAt: '2017-01-11 00:00'
-  },
-  {
-    id: 5,
-    email: 'jujinyi@snh48.com',
-    username: 'jujinyi',
-    authority: '0',
-    state: '0',
-    updateAt: '2017-05-06 01:00',
-    createAt: '2017-05-06 01:00'
-  },
-  {
-    id: 6,
-    email: 'zengyanfen@snh48.com',
-    username: 'zengyanfen',
-    authority: '0',
-    state: '0',
-    updateAt: '2017-05-06 01:00',
-    createAt: '2017-05-06 01:00'
-  },
-  {
-    id: 7,
-    email: 'fengxinduo@snh48.com',
-    username: 'fengxinduo',
-    authority: '0',
-    state: '0',
-    updateAt: '2017-05-06 01:00',
-    createAt: '2017-05-06 01:00'
-  },
-]
-
-
+    {
+      id: 1,
+      email: 'linmanamanda@gmail.com',
+      username: 'linman',
+      authority: '2',
+      status: '0',
+      updatedAt: '2017-05-04 19:18',
+      createdAt: '2017-05-04 19:18',
+    },
+    {
+      id: 2,
+      email: 'whitehairpin@snh48.com',
+      username: 'liyitong',
+      authority: '0',
+      status: '0',
+      updatedAt: '1995-12-23 00:00',
+      createdAt: '1995-12-23 00:00',
+    },
+    {
+      id: 3,
+      email: 'kotete@snh48.com',
+      username: 'huangtingting',
+      authority: '0',
+      status: '0',
+      updatedAt: '1992-09-08 00:00',
+      createdAt: '1992-09-08 00:00',
+    },
+    {
+      id: 4,
+      email: 'kh@snh48.com',
+      username: 'khgay',
+      authority: '1',
+      status: '1',
+      updatedAt: '2017-01-11 00:00',
+      createdAt: '2017-01-11 00:00',
+    },
+    {
+      id: 5,
+      email: 'jujinyi@snh48.com',
+      username: 'jujinyi',
+      authority: '0',
+      status: '0',
+      updatedAt: '2017-05-06 01:00',
+      createdAt: '2017-05-06 01:00',
+    },
+    {
+      id: 6,
+      email: 'zengyanfen@snh48.com',
+      username: 'zengyanfen',
+      authority: '0',
+      status: '0',
+      updatedAt: '2017-05-06 01:00',
+      createdAt: '2017-05-06 01:00',
+    },
+    {
+      id: 7,
+      email: 'fengxinduo@snh48.com',
+      username: 'fengxinduo',
+      authority: '0',
+      status: '0',
+      updatedAt: '2017-05-06 01:00',
+      createdAt: '2017-05-06 01:00',
+    },
+  ]
 
   import Layout from '@/components/common/Layout'
   export default {
@@ -192,7 +207,49 @@
     },
     data() {
       return {
-        data: mocklist
+        data: mocklist,
+        deletionDialogVisiable: true,
+        modificationDialogVisiable: true
+      }
+    },
+    methods: {
+      handleDeletion() {
+
+      },
+      handleModification() {
+        this.modificationDialogVisiable = true
+      }
+    },
+    filters: {
+      authorityTypeFilter(authority) {
+        const authorityTypeMap = {
+          '0': 'grey',
+          '1': 'success',
+          '2': 'warning'
+        }
+        return authorityTypeMap[authority]
+      },
+      authorityFilter(authority) {
+        const authorityMap = {
+          '0': '普通用户',
+          '1': '管理员',
+          '2': '超级管理员'
+        }
+        return authorityMap[authority]
+      },
+      statusTypeFilter(status) {
+        const statusTypeMap = {
+          '0': 'success',
+          '1': 'danger'
+        }
+        return statusTypeMap[status]
+      },
+      statusFilter(status) {
+        const statusMap = {
+          '0': '正常',
+          '1': '封禁'
+        }
+        return statusMap[status]
       }
     }
   }
