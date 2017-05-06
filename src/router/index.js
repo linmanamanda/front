@@ -1,10 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import LoginView from '../views/login/index'
-import WelcomeView from '../views/welcome'
-import UserView from '../views/user'
+import LoginView from '@/views/login/index'
+import WelcomeView from '@/views/welcome'
+import UserView from '@/views/user'
 import Layout from '@/views/layout/Layout'
-import Dialog from '@/views/dialog/dialog'
 
 Vue.use(Router)
 
@@ -31,10 +30,5 @@ export default new Router({
         component: WelcomeView
       }]
     },
-    {
-      path: '/dialog',
-      name: 'dialog',
-      component: Dialog
-    }
   ]
 })

@@ -59,6 +59,8 @@
         prop="authority"
         label="权限"
         width="110px"
+        :filters="[{text: '普通用户', value: '0'}, {text: '管理员', value: '1'}, {text: '超级管理员', value: '2'}]"
+        :filter-method="authorityFilter"
         align="center">
           <template scope="scope">
             <el-tag
@@ -70,7 +72,9 @@
       <el-table-column 
         prop="status"
         label="状态"
-        width="70px"
+        width="90px"
+        :filters="[{text: '正常', value: '0'}, {text: '封禁', value: '1'}]"
+        :filter-method="statusFilter"
         align="center">
           <template scope="scope">
             <el-tag :type="scope.row.status | statusTypeFilter">{{scope.row.status | statusFilter}}</el-tag>
@@ -117,17 +121,59 @@
       </el-table-column>
     </el-table>
 
+    <el-pagination
+      layout="prev, pager, next"
+      :total="50">
+    </el-pagination>
 
     <el-dialog
-      title="提示"
-      :visible="deletionDialogVisiable"
+      title="修改用户信息"
+      :visible="modificationDialogVisiable"
+      :show-close="false"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false">
+      <el-form
+        :model="modificationForm"
+        label-width="80px">
+        <el-form-item label="邮箱">
+          <el-input v-model="modificationForm.email"></el-input>
+        </el-form-item>
+        <el-form-item label="用户名">
+            <el-input v-model="modificationForm.username"></el-input>
+        </el-form-item>
+        <el-form-item label="权限">
+          <el-select v-model="modificationForm.authority">
+            <el-option label="普通用户" value="0"></el-option>
+            <el-option label="管理员" value="1"></el-option>
+            <el-option label="超级管理员" value="2"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-select v-model="modificationForm.status">
+            <el-option label="正常" value="0"></el-option>
+            <el-option label="封禁" value="1"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="warning" @click="modificationDialogVisiable = false">确认修改</el-button>
+          <el-button @click="modificationDialogVisiable = false">取消</el-button>
+        </el-form-item>
+      </el-form>    
+    </el-dialog>
+
+
+    <el-dialog
+      title="注意"
+      :visible.sync="deletionDialogVisiable"
       size="tiny"
-      >
-      <span>这是一段信息</span>
-      <!-- <span slot="footer" class="dialog-footer">
+      :show-close="false"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false">
+      <span>是否确定删除此条用户信息？</span>
+      <span slot="footer" class="dialog-footer">
         <el-button @click="deletionDialogVisiable = false">取 消</el-button>
-        <el-button type="primary" @click="deletionDialogVisiable = false">确 定</el-button>
-      </span> -->
+        <el-button type="danger" @click="deletionDialogVisiable = false">确 定</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
@@ -208,16 +254,35 @@
     data() {
       return {
         data: mocklist,
-        deletionDialogVisiable: true,
-        modificationDialogVisiable: true
+        deletionDialogVisiable: false,
+        modificationDialogVisiable: false,
+        modificationForm: {
+          email: '',
+          username: '',
+          authority: '',
+          status: ''
+        }
       }
     },
     methods: {
+      authorityFilter(value, row) {
+        return row.authority === value
+      },
+      statusFilter(value, row) {
+        return row.status === value
+      },
       handleDeletion() {
 
       },
       handleModification() {
         this.modificationDialogVisiable = true
+      },
+      handleClose(done) {
+        this.$confirm('确认关闭？')
+          .then(_ => {
+            done();
+          })
+          .catch(_ => {});
       }
     },
     filters: {
@@ -258,4 +323,7 @@
 <style lang="stylus" scoped>
   .filter-container
     margin-bottom 15px
+  .el-pagination
+    padding 0
+    margin-top 15px
 </style>

@@ -1,4 +1,4 @@
-import rest from '@/services/index'
+import rest from '@/api/index'
 export default {
   name: 'Welcome API',
   getWelcomeInfo() {

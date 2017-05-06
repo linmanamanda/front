@@ -10,7 +10,7 @@
 </template>
 
 <script>
-  import service from '@/services/welcome/index'
+  import service from '@/api/welcome/index'
   export default {
     name: 'welcome',
     data() {
