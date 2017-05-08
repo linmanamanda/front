@@ -1,14 +1,15 @@
 <template>
   <div class="status-bar">
     <i class="iconfont icon-other sidebar-btn" :class="{'is-active': isActive }" @click="toggleSideBar"></i>
-    <el-dropdown>
+    <el-dropdown @command="handleDropdown">
       <span class="el-dropdown-link">
-        <img src="../../assets/kh.jpg" class="user-avatar">
+        <!-- <img src="../../assets/kh.jpg" class="user-avatar"> -->
+        {{ email }}
       </span>
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item>首页</el-dropdown-item>
-        <el-dropdown-item>设置</el-dropdown-item>
-        <el-dropdown-item divided @click="logout">退出登录</el-dropdown-item>
+        <el-dropdown-item command="home">首页</el-dropdown-item>
+        <el-dropdown-item command="setting">设置</el-dropdown-item>
+        <el-dropdown-item divided command="logout">退出登录</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
   </div>
@@ -20,14 +21,42 @@
     computed: {
       isActive() {
         return this.$store.state.app.sidebar.closed
+      },
+      email() {
+        return this.$store.getters.email
       }
     },
     methods: {
       toggleSideBar() {
         this.$store.dispatch('toggleSideBar')
       },
+      handleDropdown(command) {
+        switch(command) {
+          case 'logout':
+            this.logout()
+            break
+          case 'home':
+            this.$router.push({ path: '/administrations/homes' })
+            break
+          case 'setting':
+            break
+            this.$router.push({ path: '/administrations/settings' })
+        }
+      },
       logout() {
-        
+        console.log('logout')
+        this.$store.dispatch('logout')
+          .then(() => {
+            this.$router.push({ path: '/login' })
+          })
+          .catch((error) => {
+            this.$message({
+              type: 'error',
+              message: error,
+              showClose: true,
+              duration: 0
+            })
+          })
       }
     }
   }

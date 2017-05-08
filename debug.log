@@ -36,3 +36,10 @@
 [0506/231251.960:ERROR:process_reader_win.cc(142)] SuspendThread: 拒绝访问。 (0x5)
 [0506/231251.960:ERROR:exception_snapshot_win.cc(87)] thread ID 7560 not found in process
 [0506/231251.960:WARNING:crash_report_exception_handler.cc(60)] ProcessSnapshotWin::Initialize failed
+[0507/011254.976:ERROR:process_reader_win.cc(233)] ReadMemory at 0x4e00048 of 32768 bytes failed: 仅完成部分的 ReadProcessMemory 或 WriteProcessMemory 请求。 (0x12B)
+[0507/011254.977:WARNING:pe_image_annotations_reader.cc(65)] could not read simple annotations from C:\Program Files (x86)\Google\Chrome\Application\57.0.2987.98\chrome_elf.dll
+[0507/011254.986:ERROR:process_reader_win.cc(233)] ReadMemory at 0x5540048 of 32768 bytes failed: 仅完成部分的 ReadProcessMemory 或 WriteProcessMemory 请求。 (0x12B)
+[0507/011254.986:WARNING:pe_image_annotations_reader.cc(65)] could not read simple annotations from C:\Program Files (x86)\Google\Chrome\Application\57.0.2987.98\chrome_elf.dll
+[0507/011255.017:ERROR:process_reader_win.cc(233)] ReadMemory at 0x5370048 of 32768 bytes failed: 仅完成部分的 ReadProcessMemory 或 WriteProcessMemory 请求。 (0x12B)
+[0507/011255.017:WARNING:pe_image_annotations_reader.cc(65)] could not read simple annotations from C:\Program Files (x86)\Google\Chrome\Application\57.0.2987.98\chrome_elf.dll
+[0507/152312.167:ERROR:exception_handler_server.cc(524)] ConnectNamedPipe: 管道正在被关闭。 (0xE8)

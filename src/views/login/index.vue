@@ -43,7 +43,7 @@ export default {
       // 登录表单域
 			loginForm: {
 				email: 'linmanamanda@gmail.com',
-				password: ''
+				password: 'linman2491'
 			},
 
       // 登录表单域验证规则
@@ -67,7 +67,7 @@ export default {
         ]
       },
 
-      loadding: false
+      loading: false,
 		}
 	},
   methods: {
@@ -75,13 +75,25 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.loadding = true
-          alert('submit!')
+          this.$store.dispatch('login', this.loginForm)
+            .then(() => {
+              this.loading = false
+              this.$router.push({ path: '/administrations/users' })
+            })
+            .catch((error) => {
+              this.$message.error({
+                type: 'error',
+                message: error,
+                showClose: true,
+                duration: 0
+              })
+              this.loading = false
+            })
         } else {
-          console.log('error submit!!')
           return false
         }
       })
-    }
+    },
   }
 }
 </script>
