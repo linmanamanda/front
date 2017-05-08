@@ -83,7 +83,7 @@ export default {
             .catch((error) => {
               this.$message.error({
                 type: 'error',
-                message: error,
+                message: error.message,
                 showClose: true,
                 duration: 0
               })

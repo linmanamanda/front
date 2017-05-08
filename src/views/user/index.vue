@@ -2,21 +2,32 @@
   <div class="user-view">
     <div class="filter-container">
       <el-input
+        v-model="query.like.email"
         placeholder="邮箱" 
         style="width: 200px;">
       </el-input>
 
-      <el-input placeholder="用户名" style="width: 150px;"></el-input>
+      <el-input
+        v-model="query.like.username" 
+        placeholder="用户名" 
+        style="width: 150px;">
+      </el-input>
 
-      <el-select placeholder="权限" style="width: 80px">
-        <el-option>普通用户</el-option>
-        <el-option>管理员</el-option>
-        <el-option>超级管理员</el-option>
+      <el-select
+        v-model="query.equal.authority" 
+        placeholder="权限" 
+        style="width: 80px">
+        <el-option :value="0">普通用户</el-option>
+        <el-option :value="1">管理员</el-option>
+        <el-option :value="2">超级管理员</el-option>
       </el-select>
 
-      <el-select placeholder="状态" style="width: 80px">
-        <el-option>正常状态</el-option>
-        <el-option>封禁状态</el-option>
+      <el-select
+        v-model="query.equal.status" 
+        placeholder="状态" 
+        style="width: 80px">
+        <el-option :value="0">正常状态</el-option>
+        <el-option :value="1">封禁状态</el-option>
       </el-select>
 
       <el-button type="primary" icon="search">搜索</el-button>
@@ -26,6 +37,8 @@
 
     <el-table 
       :data="data" 
+      v-loading="loading"
+      element-loading-text="正在全力加载用户信息中"
       style="width: 100%"
       border
       highlight-current-row>
@@ -122,8 +135,13 @@
     </el-table>
 
     <el-pagination
-      layout="prev, pager, next"
-      :total="50">
+      layout="sizes, prev, pager, next, jumper"
+      @current-change="handlePageChange"
+      @size-change="handleSizeChange"
+      :current-page="query.limit.currenPage"
+      :page-size="query.limit.pageSize"
+      :page-sizes="[5, 10]"
+      :total="total">
     </el-pagination>
 
     <el-dialog
@@ -179,73 +197,25 @@
 </template>
 
 <script>
-  const mocklist = [
-    {
-      id: 1,
-      email: 'linmanamanda@gmail.com',
-      username: 'linman',
-      authority: '2',
-      status: '0',
-      updatedAt: '2017-05-04 19:18',
-      createdAt: '2017-05-04 19:18',
-    },
-    {
-      id: 2,
-      email: 'whitehairpin@snh48.com',
-      username: 'liyitong',
-      authority: '0',
-      status: '0',
-      updatedAt: '1995-12-23 00:00',
-      createdAt: '1995-12-23 00:00',
-    },
-    {
-      id: 3,
-      email: 'kotete@snh48.com',
-      username: 'huangtingting',
-      authority: '0',
-      status: '0',
-      updatedAt: '1992-09-08 00:00',
-      createdAt: '1992-09-08 00:00',
-    },
-    {
-      id: 4,
-      email: 'kh@snh48.com',
-      username: 'khgay',
-      authority: '1',
-      status: '1',
-      updatedAt: '2017-01-11 00:00',
-      createdAt: '2017-01-11 00:00',
-    },
-    {
-      id: 5,
-      email: 'jujinyi@snh48.com',
-      username: 'jujinyi',
-      authority: '0',
-      status: '0',
-      updatedAt: '2017-05-06 01:00',
-      createdAt: '2017-05-06 01:00',
-    },
-    {
-      id: 6,
-      email: 'zengyanfen@snh48.com',
-      username: 'zengyanfen',
-      authority: '0',
-      status: '0',
-      updatedAt: '2017-05-06 01:00',
-      createdAt: '2017-05-06 01:00',
-    },
-    {
-      id: 7,
-      email: 'fengxinduo@snh48.com',
-      username: 'fengxinduo',
-      authority: '0',
-      status: '0',
-      updatedAt: '2017-05-06 01:00',
-      createdAt: '2017-05-06 01:00',
-    },
-  ]
+  // const mocklist = [
+  //   {
+  //     id: 1,
+  //     email: 'linmanamanda@gmail.com',
+  //     username: 'linman',
+  //     authority: '2',
+  //     status: '0',
+  //     updatedAt: '2017-05-04 19:18',
+  //     createdAt: '2017-05-04 19:18',
+  //   },
+  // ]
 
+
+  import api from '@/api/user'
   import Layout from '@/components/common/Layout'
+  import { Loading } from 'element-ui'
+
+
+
   export default {
     name: 'UserView',
     components: {
@@ -253,7 +223,7 @@
     },
     data() {
       return {
-        data: mocklist,
+        data: [],
         deletionDialogVisiable: false,
         modificationDialogVisiable: false,
         modificationForm: {
@@ -261,10 +231,67 @@
           username: '',
           authority: '',
           status: ''
-        }
+        },
+        // 搜索条件
+        query: {
+          like: {
+            email: '',
+            username: ''
+          },
+          equal: {
+            status: '',
+            authority: '',
+          },
+          limit: {
+            pageSize: 5,
+            currenPage: 1,
+          }
+        },
+        loading: true,
+        total: 0
       }
     },
+    created() {
+      this.getUsers()
+    },
+    watch: {
+      '$route': 'getUsers',
+    },
     methods: {
+      getUsers() {
+
+        api.getUsers(query)
+          .then((response) => {
+            const code = response.code
+            const data = response.data
+            if (code === 0) {
+              this.data = data.users
+              this.total = data.total
+              this.loading = false
+            } else {
+              // Promise.reject(new Error('获取用户信息失败，请稍后再试！'))
+            }
+          })
+          .catch((error) => {
+
+            this.loading = false
+            
+            this.$message({
+              type: 'error',
+              message: error.message,
+              showClose: true,
+              duration: 0
+            })
+          })
+      },
+      handlePageChange(page) {
+        this.query.limit.currenPage = page
+        this.getUsers()
+      },
+      handleSizeChange(size) {
+        this.query.limit.pageSize = size
+        this.getUsers()
+      },
       authorityFilter(value, row) {
         return row.authority === value
       },

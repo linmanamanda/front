@@ -25,7 +25,7 @@
       isClosed() {
         return this.$store.state.app.sidebar.closed
       }
-    }
+    },
   }
 </script>
 

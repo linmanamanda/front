@@ -44,15 +44,22 @@ const actions = {
           const code =  response.code
 
           if (code === 0) {
+
             const data = response.data
-            const token = data.token
-            localStorage.setItem('token', token)
-            commit('SET_TOKEN', token)
-            commit('SET_EMAIL', email)
-            commit('SET_USERNAME', data.username)
-            commit('SET_STATUS', data.status)
-            commit('SET_AUTHORITY', data.authority)
-            resolve()
+            const authority = data.authority
+
+            if (authority === 0) {
+              reject(new Error('您当前登录的用户权限不足，请切换用户！'))
+            } else {
+              const token = data.token
+              localStorage.setItem('token', token)
+              commit('SET_TOKEN', token)
+              commit('SET_EMAIL', email)
+              commit('SET_USERNAME', data.username)
+              commit('SET_STATUS', data.status)
+              commit('SET_AUTHORITY', data.authority)
+              resolve()
+            }
           } else if (code === 1) {
             reject(response.error)
           }
