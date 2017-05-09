@@ -1,40 +1,67 @@
 <template>
   <div class="user-view">
     <div class="filter-container">
+      <!-- 邮箱搜索条件设置栏 -->
       <el-input
-        v-model="query.like.email"
+        v-model="query.email"
         placeholder="邮箱" 
         style="width: 200px;">
       </el-input>
 
+      <!-- 用户名搜索条件设置栏 -->
       <el-input
-        v-model="query.like.username" 
+        v-model="query.username" 
         placeholder="用户名" 
         style="width: 150px;">
       </el-input>
 
+      <!-- 权限搜索条件设置栏 -->
       <el-select
-        v-model="query.equal.authority" 
+        v-model="query.authority" 
+        clearable
         placeholder="权限" 
-        style="width: 80px">
-        <el-option :value="0">普通用户</el-option>
-        <el-option :value="1">管理员</el-option>
-        <el-option :value="2">超级管理员</el-option>
+        style="width: 120px">
+        <el-option 
+          :value="0" 
+          label="普通用户">
+        </el-option>
+        <el-option 
+          :value="1" 
+          label="管理员">
+        </el-option>
+        <el-option 
+          :value="2" 
+          label="超级管理员">
+        </el-option>
       </el-select>
 
+      <!-- 状态搜索条件设置栏 -->
       <el-select
-        v-model="query.equal.status" 
+        v-model="query.status" 
+        clearable
         placeholder="状态" 
-        style="width: 80px">
-        <el-option :value="0">正常状态</el-option>
-        <el-option :value="1">封禁状态</el-option>
+        style="width: 120px">
+        <el-option 
+          :value="0"
+          label="正常状态">
+        </el-option>
+        <el-option 
+          :value="1"
+          label="封禁状态">
+        </el-option>
       </el-select>
 
-      <el-button type="primary" icon="search">搜索</el-button>
+      <el-button
+        @click="search" 
+        type="primary" 
+        icon="search">
+        搜索
+      </el-button>
 
       <el-button type="primary" icon="document">导出</el-button>
     </div>
 
+    <!-- 用户信息展示表格栏 -->
     <el-table 
       :data="data" 
       v-loading="loading"
@@ -58,14 +85,14 @@
         label="邮箱"
         min-width="210px"
         align="center">
-          <template scope="scope">{{scope.row.email}}</template>
+        <template scope="scope">{{scope.row.email}}</template>
       </el-table-column>
 
       <el-table-column 
         prop="username"
         label="用户名"
         align="center">
-          <template scope="scope">{{scope.row.username}}</template>
+        <template scope="scope">{{scope.row.username}}</template>
       </el-table-column>
 
       <el-table-column 
@@ -75,11 +102,11 @@
         :filters="[{text: '普通用户', value: '0'}, {text: '管理员', value: '1'}, {text: '超级管理员', value: '2'}]"
         :filter-method="authorityFilter"
         align="center">
-          <template scope="scope">
-            <el-tag
-              :type="scope.row.authority | authorityTypeFilter"
-            >{{scope.row.authority | authorityFilter}}</el-tag>
-          </template>
+        <template scope="scope">
+          <el-tag
+            :type="scope.row.authority | authorityTypeFilter"
+          >{{scope.row.authority | authorityFilter}}</el-tag>
+        </template>
       </el-table-column>
 
       <el-table-column 
@@ -89,9 +116,9 @@
         :filters="[{text: '正常', value: '0'}, {text: '封禁', value: '1'}]"
         :filter-method="statusFilter"
         align="center">
-          <template scope="scope">
-            <el-tag :type="scope.row.status | statusTypeFilter">{{scope.row.status | statusFilter}}</el-tag>
-          </template>
+        <template scope="scope">
+          <el-tag :type="scope.row.status | statusTypeFilter">{{scope.row.status | statusFilter}}</el-tag>
+        </template>
       </el-table-column>
 
       <el-table-column 
@@ -99,9 +126,8 @@
         label="最新修改时间"
         sortable
         width="180px"
-        align="center"
-        >
-          <template scope="scope">{{scope.row.updatedAt}}</template>
+        align="center">
+        <template scope="scope">{{scope.row.updatedAt}}</template>
       </el-table-column>
 
       <el-table-column 
@@ -109,16 +135,14 @@
         label="创建时间"
         sortable
         width="180px"
-        align="center"
-        >
-          <template scope="scope">{{scope.row.createdAt}}</template>
+        align="center">
+        <template scope="scope">{{scope.row.createdAt}}</template>
       </el-table-column>
 
       <el-table-column
         label="操作"
         min-width="150px"
-        align="center"
-      >
+        align="center">
         <template scope="scope">
           <el-button 
             type="warning" 
@@ -134,16 +158,18 @@
       </el-table-column>
     </el-table>
 
+    <!-- 页面分页栏 -->
     <el-pagination
-      layout="sizes, prev, pager, next, jumper"
+      layout="total, sizes, prev, pager, next, jumper"
       @current-change="handlePageChange"
       @size-change="handleSizeChange"
-      :current-page="query.limit.currenPage"
-      :page-size="query.limit.pageSize"
+      :current-page="query.currentPage"
+      :page-size="query.pageSize"
       :page-sizes="[5, 10]"
       :total="total">
     </el-pagination>
 
+    <!-- 修改用户信息对话栏 -->
     <el-dialog
       title="修改用户信息"
       :visible="modificationDialogVisiable"
@@ -180,7 +206,7 @@
     </el-dialog>
 
 
-    <el-dialog
+    <!-- <el-dialog
       title="注意"
       :visible.sync="deletionDialogVisiable"
       size="tiny"
@@ -192,7 +218,7 @@
         <el-button @click="deletionDialogVisiable = false">取 消</el-button>
         <el-button type="danger" @click="deletionDialogVisiable = false">确 定</el-button>
       </span>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
@@ -212,9 +238,6 @@
 
   import api from '@/api/user'
   import Layout from '@/components/common/Layout'
-  import { Loading } from 'element-ui'
-
-
 
   export default {
     name: 'UserView',
@@ -230,22 +253,15 @@
           email: '',
           username: '',
           authority: '',
-          status: ''
+          status: '',
         },
-        // 搜索条件
         query: {
-          like: {
-            email: '',
-            username: ''
-          },
-          equal: {
-            status: '',
-            authority: '',
-          },
-          limit: {
-            pageSize: 5,
-            currenPage: 1,
-          }
+          email: '',
+          username: '',
+          status: '',
+          authority: '',
+          pageSize: 5,
+          currentPage: 1,
         },
         loading: true,
         total: 0
@@ -260,7 +276,7 @@
     methods: {
       getUsers() {
 
-        api.getUsers(query)
+        api.getUsers(this.query)
           .then((response) => {
             const code = response.code
             const data = response.data
@@ -284,12 +300,15 @@
             })
           })
       },
+      search() {
+        this.getUsers()
+      },
       handlePageChange(page) {
-        this.query.limit.currenPage = page
+        this.query.currentPage = page
         this.getUsers()
       },
       handleSizeChange(size) {
-        this.query.limit.pageSize = size
+        this.query.pageSize = size
         this.getUsers()
       },
       authorityFilter(value, row) {
