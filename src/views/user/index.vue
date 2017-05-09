@@ -147,12 +147,12 @@
           <el-button 
             type="warning" 
             size="small"
-            @click="handleModification(scope.row)"
+            @click="initModification(scope.row)"
             >修改</el-button>
           <el-button 
             type="danger" 
             size="small"
-            @click="deletionDialogVisiable = true"
+            @click="initDeletion(scope.row)"
             >删除</el-button>
         </template>
       </el-table-column>
@@ -180,33 +180,48 @@
         :model="modificationForm"
         label-width="80px">
         <el-form-item label="邮箱">
-          <el-input v-model="modificationForm.email"></el-input>
+          <el-input v-model="modificationForm.email" disabled></el-input>
         </el-form-item>
         <el-form-item label="用户名">
             <el-input v-model="modificationForm.username"></el-input>
         </el-form-item>
         <el-form-item label="权限">
           <el-select v-model="modificationForm.authority">
-            <el-option label="普通用户" value="0"></el-option>
-            <el-option label="管理员" value="1"></el-option>
-            <el-option label="超级管理员" value="2"></el-option>
+            <el-option 
+              label="普通用户" 
+              :value="0">
+            </el-option>
+            <el-option 
+              label="管理员" 
+              :value="1">
+            </el-option>
+            <el-option 
+              label="超级管理员" 
+              :value="2">
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="状态">
           <el-select v-model="modificationForm.status">
-            <el-option label="正常" value="0"></el-option>
-            <el-option label="封禁" value="1"></el-option>
+            <el-option 
+              label="正常" 
+              :value="0">
+            </el-option>
+            <el-option 
+              label="封禁" 
+              :value="1">
+            </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item>
-          <el-button type="warning" @click="modificationDialogVisiable = false">确认修改</el-button>
-          <el-button @click="modificationDialogVisiable = false">取消</el-button>
-        </el-form-item>
       </el-form>    
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="confirmModification">确认修改</el-button>
+        <el-button @click="modificationDialogVisiable = false">取消</el-button>
+      </div>
     </el-dialog>
 
 
-    <!-- <el-dialog
+    <el-dialog
       title="注意"
       :visible.sync="deletionDialogVisiable"
       size="tiny"
@@ -216,9 +231,9 @@
       <span>是否确定删除此条用户信息？</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="deletionDialogVisiable = false">取 消</el-button>
-        <el-button type="danger" @click="deletionDialogVisiable = false">确 定</el-button>
+        <el-button type="danger" @click="confirmDeletion">确 定</el-button>
       </span>
-    </el-dialog> -->
+    </el-dialog>
   </div>
 </template>
 
@@ -248,6 +263,9 @@
       return {
         data: [],
         deletionDialogVisiable: false,
+        deletionForm: {
+          email: ''
+        },
         modificationDialogVisiable: false,
         modificationForm: {
           email: '',
@@ -275,30 +293,29 @@
     },
     methods: {
       getUsers() {
-
-        api.getUsers(this.query)
-          .then((response) => {
-            const code = response.code
-            const data = response.data
-            if (code === 0) {
-              this.data = data.users
-              this.total = data.total
-              this.loading = false
-            } else {
-              // Promise.reject(new Error('获取用户信息失败，请稍后再试！'))
-            }
-          })
-          .catch((error) => {
-
-            this.loading = false
-            
-            this.$message({
-              type: 'error',
-              message: error.message,
-              showClose: true,
-              duration: 0
+        return new Promise((resolve, reject) => {
+          api.getUsers(this.query)
+            .then((response) => {
+              let code = response.code
+              let data = response.data
+              if (code === 0) {
+                this.data = data.users
+                this.total = data.total
+                this.loading = false
+              } else if (code === 1) {
+                reject(new Error('获取用户信息失败，请稍后再试！'))
+              }
             })
-          })
+            .catch((error) => {
+              this.loading = false
+              this.$message({
+                type: 'error',
+                message: error.message,
+                showClose: true,
+                duration: 0,
+              })
+            })
+        })
       },
       search() {
         this.getUsers()
@@ -320,16 +337,77 @@
       handleDeletion() {
 
       },
-      handleModification() {
+      initModification(row) {
         this.modificationDialogVisiable = true
+        this.modificationForm.email = row.email
+        this.modificationForm.username = row.username
+        this.modificationForm.status = row.status
+        this.modificationForm.authority = row.authority
       },
-      handleClose(done) {
-        this.$confirm('确认关闭？')
-          .then(_ => {
-            done();
-          })
-          .catch(_ => {});
-      }
+      confirmModification() {
+        return new Promise((resolve, reject) => {
+          api.updateUser(this.modificationForm) 
+            .then((response) => {
+              let code = response.code
+              if (code === 0) {
+                this.$message({
+                  type: 'success',
+                  message: '修改用户信息成功！',
+                  showClose: true,
+                  duration: 0
+                })
+                this.modificationDialogVisiable = false
+                this.loading = true
+                this.getUsers()
+              } else if (code === 1){
+                reject(new Error('修改用户信息失败！'))
+              }
+            })
+            .catch((error) => {
+              this.modificationDialogVisiable = false
+              this.$message({
+                type: 'error',
+                message: error.message,
+                showClose: true,
+                duration: 0
+              })
+            })
+        })
+      },
+      initDeletion(row) {
+        this.deletionForm.email = row.email
+        this.deletionDialogVisiable = true
+      },
+      confirmDeletion() {
+        return new Promise((resolve, reject) => {
+          api.deleteUser(this.deletionForm)
+            .then((response) => {
+              let code = response.code
+              if (code === 0) {
+                this.deletionDialogVisiable = false
+                this.$message({
+                  type: 'success',
+                  message: '删除用户成功！',
+                  showClose: true,
+                  duration: 0
+                })
+                this.loading = true
+                this.getUsers()
+              } else if (code === 1){
+                reject(new Error('删除用户失败！'))
+              }
+            })
+            .catch((error) => {
+              this.deletionDialogVisiable = false
+              this.$message({
+                type: 'error',
+                message: error.message,
+                showClose: true,
+                duration: 0
+              })
+            })
+        })
+      },
     },
     filters: {
       authorityTypeFilter(authority) {

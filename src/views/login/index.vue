@@ -12,7 +12,8 @@
           name="email" 
           type="text" 
           v-model="loginForm.email" 
-          placeholder="邮箱"></el-input>
+          placeholder="邮箱">
+        </el-input>
       </el-form-item>
       <el-form-item prop="password">
         <i class="iconfont icon-lock_fill"></i>
@@ -28,7 +29,8 @@
           type="primary" 
           style="width: 100%"
           :loading="loading" 
-          @click="login('loginForm')">登录
+          @click="login('loginForm')">
+          登录
         </el-button>
       </el-form-item>
     </el-form>

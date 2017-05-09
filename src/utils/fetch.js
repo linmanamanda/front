@@ -21,7 +21,6 @@ export function fetch(options) {
           showClose: true,
           duration: 0
         })
-        // reject(error)
       })
   })
 }

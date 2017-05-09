@@ -23,7 +23,7 @@
     },
     computed: {
       isClosed() {
-        return this.$store.state.app.sidebar.closed
+        return this.$store.getters.sidebarIsClosed
       }
     },
   }

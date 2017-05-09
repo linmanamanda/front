@@ -1,17 +1,16 @@
 const state = {
-  sidebar: {
-    closed: localStorage.getItem('sidebarStatus') === 'true' ? true : false
-  }
+  // 侧边栏是否处于闭合状态
+  sidebarIsClosed: sessionStorage.getItem('sidebar_is_closed') === 'true' ? true : false
 }
 
 const mutations = {
   TOGGLE_SIDEBAR: state => {
-    if (!state.sidebar.closed) {
-      localStorage.setItem('sidebarStatus', true)
+    if (!state.sidebarIsClosed) {
+      sessionStorage.setItem('sidebar_is_closed', true)
     } else {
-      localStorage.setItem('sidebarStatus', false)
+      sessionStorage.setItem('sidebar_is_closed', false)
     }
-    state.sidebar.closed = !state.sidebar.closed
+    state.sidebarIsClosed = !state.sidebarIsClosed
   }
 }
 

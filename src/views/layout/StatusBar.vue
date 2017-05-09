@@ -1,6 +1,10 @@
 <template>
   <div class="status-bar">
-    <i class="iconfont icon-other sidebar-btn" :class="{'is-active': isActive }" @click="toggleSideBar"></i>
+    <i 
+      class="iconfont icon-other sidebar-btn" 
+      :class="{'is-active': isActive }" 
+      @click="toggleSideBar">
+    </i>
     <el-dropdown @command="handleDropdown">
       <span class="el-dropdown-link">
         <!-- <img src="../../assets/kh.jpg" class="user-avatar"> -->
@@ -20,7 +24,7 @@
     name: 'StatusBar',
     computed: {
       isActive() {
-        return this.$store.state.app.sidebar.closed
+        return this.$store.getters.sidebarIsClosed
       },
       email() {
         return this.$store.getters.email
@@ -44,10 +48,9 @@
         }
       },
       logout() {
-        console.log('logout')
         this.$store.dispatch('logout')
           .then(() => {
-            this.$router.push({ path: '/login' })
+            this.$router.push({ path: '/logins' })
           })
           .catch((error) => {
             this.$message({
