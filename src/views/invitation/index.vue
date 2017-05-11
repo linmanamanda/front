@@ -1,0 +1,338 @@
+<template>
+  <div class="invitation-view">
+    <div class="filter-container">
+      <!-- 标题搜索条件设置栏 -->
+      <el-input
+        v-model="query.title"
+        placeholder="标题" 
+        style="width: 200px;">
+      </el-input>
+
+      <!-- 相约地点搜索条件设置栏 -->
+      <el-input
+        v-model="query.location" 
+        placeholder="相约地点" 
+        style="width: 150px;">
+      </el-input>
+
+      <!-- 相约开始时间搜索条件设置栏 -->
+      <el-date-picker
+        v-model="query.begintime"
+        type="datetime"
+        placeholder="发布开始时间">
+      </el-date-picker>
+
+      <!-- 相约结束时间搜索条件设置栏 -->
+      <el-date-picker
+        v-model="query.endtime"
+        type="datetime"
+        placeholder="发布结束时间">
+      </el-date-picker>
+
+      <!-- 发布人搜索条件设置栏 -->
+      <el-input
+        v-model="query.createdBy" 
+        placeholder="发布人" 
+        style="width: 150px;">
+      </el-input>
+
+      <!-- 状态搜索条件设置栏 -->
+      <el-select
+        v-model="query.status" 
+        clearable
+        placeholder="状态" 
+        style="width: 120px">
+        <el-option 
+          :value="0"
+          label="等待相约">
+        </el-option>
+        <el-option 
+          :value="1"
+          label="相约成功">
+        </el-option>
+        <el-option 
+          :value="2"
+          label="信息已过期">
+        </el-option>
+        <el-option 
+          :value="3"
+          label="封禁">
+        </el-option>
+      </el-select>
+
+      <el-button
+        @click="search" 
+        type="primary" 
+        icon="search">
+        搜索
+      </el-button>
+
+      <el-button type="primary" icon="document">导出</el-button>
+    </div>
+
+    <!-- 相约信息展示表格栏 -->
+    <el-table
+      :data="data"
+      v-loading="loading"
+      element-loading-text="正在全力加载相约信息中"
+      highlight-current-row
+      style="width: 100%">
+      <el-table-column type="expand">
+        <template scope="scope">
+          <el-form label-position="left" inline class="invitation-table-expand">
+            <el-form-item label="ID">
+              <span>{{ scope.row.id }}</span>
+            </el-form-item>
+            <el-form-item label="标题">
+              <span>{{ scope.row.title }}</span>
+            </el-form-item>
+            <el-form-item label="发布时间">
+              <span>{{ scope.row.time | timeFilter}}</span>
+            </el-form-item>
+            <el-form-item label="地点">
+              <span>{{ scope.row.location }}</span>
+            </el-form-item>
+            <el-form-item label="状态">
+              <span>{{ scope.row.status }}</span>
+            </el-form-item>
+            <el-form-item label="发布人">
+              <span>{{ scope.row.createdBy }}</span>
+            </el-form-item>
+            <el-form-item label="创建时间">
+              <span>{{ scope.row.createdAt | timeFilter}}</span>
+            </el-form-item>
+            <el-form-item label="最新修改时间">
+              <span>{{ scope.row.updatedAt | timeFilter}}</span>
+            </el-form-item>
+            <el-form-item label="内容">
+              <span>{{ scope.row.content }}</span>
+            </el-form-item>
+          </el-form>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="ID"
+        prop="id"
+        width="70px"
+        sortable
+        align="center">
+      </el-table-column>
+      <el-table-column
+        label="标题"
+        prop="title"
+        min-width="210px"
+        align="center">
+      </el-table-column>
+      <el-table-column
+        label="发布时间"
+        prop="time"
+        width="210px"
+        sortable
+        align="center">
+        <template scope="scope">{{scope.row.time | timeFilter}}</template>
+      </el-table-column>
+      <el-table-column
+        label="相约地点"
+        prop="location"
+        width="150px"
+        align="center">
+      </el-table-column>
+      <el-table-column
+        label="发布人"
+        prop="createdBy"
+        width="210px"
+        align="center">
+      </el-table-column>
+      <el-table-column
+        label="状态"
+        prop="status"
+        width="100px"
+        align="center">
+        <template scope="scope">
+          <el-tag :type="scope.row.status | statusTypeFilter">{{ scope.row.status | statusFilter }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="操作"
+        min-width="150px"
+        align="center">
+        <template scope="scope">
+          <el-button 
+            type="warning" 
+            size="small"
+            @click="initModification(scope.row)"
+            >修改</el-button>
+          <el-button 
+            type="danger" 
+            size="small"
+            @click="initDeletion(scope.row)"
+            >删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+
+    <!-- 页面分页栏 -->
+    <el-pagination
+      layout="total, sizes, prev, pager, next, jumper"
+      @current-change="handlePageChange"
+      @size-change="handleSizeChange"
+      :current-page="query.currentPage"
+      :page-size="query.pageSize"
+      :page-sizes="[5, 10]"
+      :total="total">
+    </el-pagination>
+  </div>
+</template>
+
+<script>
+
+  const mocklist = [
+    {
+      id: 1,
+      title: '期末复习约自习小伙伴',
+      content: '宿舍在二教附近，求约小伙伴一起在老图自习',
+      time: '2017-05-10 08:00:00',
+      location: '重邮老图书馆',
+      status: 0,
+      createdBy: 1,
+      createdAt: '2017-05-10 20:00:00',
+      updatedAt: '2017-05-10 20:00:00',
+    },
+    {
+      id: 2,
+      title: '英语口语角约对练小伙伴',
+      content: '英语口语角在春华秋实广场，求约小伙伴一起对练',
+      time: '2017-05-10 20:00:00',
+      location: '重邮春华秋实广场',
+      status: 0,
+      createdBy: 2,
+      createdAt: '2017-05-10 20:00:00',
+      updatedAt: '2017-05-10 20:00:00',
+    }
+  ]
+
+  import { timeFilter } from '@/filters'
+  import api from '@/api/invitation'
+
+  export default {
+    name: 'InvitationView',
+    data() {
+      return {
+        data: [],
+        deletionDialogVisiable: false,
+        deletionForm: {
+
+        },
+        modificationDialogVisiable: false,
+        modificationForm: {
+
+        },
+        query: {
+          title: '',
+          begintime: '',
+          endtime: '',
+          location: '',
+          status: '',
+          createdBy : '',
+          currentPage: 1,
+          pageSize: 5,
+        },
+        loading: false,
+        total: 0,
+      }
+    },
+    created() {
+      this.getInvitations()
+    },
+    watch: {
+      '$route': 'getInvitations'
+    },
+    methods: {
+      getInvitations() {
+        api.getInvitations(this.query)
+          .then((response) => {
+            let code = response.code
+            if (code === 0) {
+              let data = response.data
+              this.data = data.invitations
+              this.total = data.total
+              this.loading = false
+            } else {
+              this.loading = false
+              let error = response.error
+              this.$message({
+                type: 'error',
+                message: error.message,
+                showClose: true,
+                duration: 2 * 1000
+              })
+            }
+          })
+          .catch((error) => {
+            this.loading = false
+            this.$message({
+              type: 'error',
+              message: error.message,
+              showClose: true, 
+              duration: 2 * 1000
+            })
+          })
+      },
+      search() {
+        this.getInvitations()
+      },
+      handlePageChange(page) {
+        this.query.currentPage = page
+        this.getInvitations()
+      },
+      handleSizeChange(size) {
+        this.query.pageSize = size
+        this.getInvitations()
+      },
+      initModification(row) {
+
+      },
+      initDeletion(row) {
+
+      } 
+    },
+    filters: {
+      statusTypeFilter(status) {
+        const statusTypeMap = {
+          '0': 'grey',
+          '1': 'success',
+          '2': 'warning',
+          '3': 'danger',
+        }
+        return statusTypeMap[status]
+      },
+      statusFilter(status) {
+        const statusMap = {
+          '0': '等待相约',
+          '1': '相约成功',
+          '3': '信息已过期',
+          '4': '封禁',
+        }
+        return statusMap[status]
+      },
+      timeFilter,
+    },
+  }
+</script>
+
+<style lang="stylus">
+  .filter-container
+    margin-bottom 15px
+  .el-pagination
+    padding 0
+    margin-top 15px
+  .invitation-table-expand
+    font-size 0
+    label
+      width 100px
+      color #99a9bf
+    .el-form-item
+      margin-right 0 !important
+      margin-bottom 0
+      width 50%
+</style>

@@ -5,9 +5,12 @@ import store from '../store'
 
 export function fetch(options) {
   return new Promise((resolve, reject) => {
-    const instance = axios.create({
+    let instance = axios.create({
       baseURL: 'http://127.0.0.1:3001',
-      timeout: 2000
+      timeout: 2000,
+      headers: {
+        Authorization: `Bearer ${store.getters.token}`
+      }
     })
     instance(options)
       .then((response) => {

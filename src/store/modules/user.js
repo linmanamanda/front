@@ -55,7 +55,7 @@ const actions = {
             let authority = data.authority
 
             if (authority === 0) {
-              reject(new Error('您当前登录的用户权限不足，请切换用户！'))
+              reject(new Error('当前身份为普通用户，权限不足'))
             } else {
               commit('SET_EMAIL', email)
               commit('SET_USERNAME', data.username)
@@ -64,7 +64,7 @@ const actions = {
               commit('SET_AUTHORITY', data.authority)
               resolve()
             }
-          } else if (code === 1) {
+          } else {
             reject(response.error)
           }
         })

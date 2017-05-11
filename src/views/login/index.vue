@@ -87,7 +87,7 @@ export default {
                 type: 'error',
                 message: error.message,
                 showClose: true,
-                duration: 0
+                duration: 2 * 1000
               })
               this.loading = false
             })

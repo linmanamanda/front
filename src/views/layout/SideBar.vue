@@ -71,7 +71,7 @@
     {
       title: '数据报表',
       icon: 'icon-dynamic_fill',
-      path: '/administrations/datas',
+      path: '/administrations/charts',
       hidden: false,
     }
   ]

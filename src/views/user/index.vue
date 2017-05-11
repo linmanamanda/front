@@ -99,8 +99,6 @@
         prop="authority"
         label="权限"
         width="110px"
-        :filters="[{text: '普通用户', value: '0'}, {text: '管理员', value: '1'}, {text: '超级管理员', value: '2'}]"
-        :filter-method="authorityFilter"
         align="center">
         <template scope="scope">
           <el-tag
@@ -113,8 +111,6 @@
         prop="status"
         label="状态"
         width="90px"
-        :filters="[{text: '正常', value: '0'}, {text: '封禁', value: '1'}]"
-        :filter-method="statusFilter"
         align="center">
         <template scope="scope">
           <el-tag :type="scope.row.status | statusTypeFilter">{{scope.row.status | statusFilter}}</el-tag>
@@ -127,7 +123,7 @@
         sortable
         width="180px"
         align="center">
-        <template scope="scope">{{scope.row.updatedAt}}</template>
+        <template scope="scope">{{scope.row.updatedAt | timeFilter}}</template>
       </el-table-column>
 
       <el-table-column 
@@ -136,7 +132,7 @@
         sortable
         width="180px"
         align="center">
-        <template scope="scope">{{scope.row.createdAt}}</template>
+        <template scope="scope">{{scope.row.createdAt | timeFilter}}</template>
       </el-table-column>
 
       <el-table-column
@@ -250,15 +246,11 @@
   //   },
   // ]
 
-
+  import { timeFilter } from '@/filters'
   import api from '@/api/user'
-  import Layout from '@/components/common/Layout'
 
   export default {
     name: 'UserView',
-    components: {
-      Layout
-    },
     data() {
       return {
         data: [],
@@ -293,29 +285,34 @@
     },
     methods: {
       getUsers() {
-        return new Promise((resolve, reject) => {
-          api.getUsers(this.query)
-            .then((response) => {
-              let code = response.code
+        api.getUsers(this.query)
+          .then((response) => {
+            let code = response.code
+            if (code === 0) {
               let data = response.data
-              if (code === 0) {
-                this.data = data.users
-                this.total = data.total
-                this.loading = false
-              } else if (code === 1) {
-                reject(new Error('获取用户信息失败，请稍后再试！'))
-              }
-            })
-            .catch((error) => {
+              this.data = data.users
+              this.total = data.total
               this.loading = false
+            } else {
+              this.loading = false
+              let error = response.error
               this.$message({
                 type: 'error',
                 message: error.message,
                 showClose: true,
-                duration: 0,
+                duration: 2 * 1000,
               })
+            }
+          })
+          .catch((error) => {
+            this.loading = false
+            this.$message({
+              type: 'error',
+              message: error.message,
+              showClose: true,
+              duration: 2 * 1000,
             })
-        })
+          })
       },
       search() {
         this.getUsers()
@@ -328,12 +325,6 @@
         this.query.pageSize = size
         this.getUsers()
       },
-      authorityFilter(value, row) {
-        return row.authority === value
-      },
-      statusFilter(value, row) {
-        return row.status === value
-      },
       handleDeletion() {
 
       },
@@ -345,68 +336,78 @@
         this.modificationForm.authority = row.authority
       },
       confirmModification() {
-        return new Promise((resolve, reject) => {
-          api.updateUser(this.modificationForm) 
-            .then((response) => {
-              let code = response.code
-              if (code === 0) {
-                this.$message({
-                  type: 'success',
-                  message: '修改用户信息成功！',
-                  showClose: true,
-                  duration: 0
-                })
-                this.modificationDialogVisiable = false
-                this.loading = true
-                this.getUsers()
-              } else if (code === 1){
-                reject(new Error('修改用户信息失败！'))
-              }
-            })
-            .catch((error) => {
+        api.updateUser(this.modificationForm) 
+          .then((response) => {
+            let code = response.code
+            if (code === 0) {
+              this.modificationDialogVisiable = false
+              this.$message({
+                type: 'success',
+                message: '修改用户信息成功！',
+                showClose: true,
+                duration: 2 * 1000
+              })
+              this.loading = true
+              this.getUsers()
+            } else {
+              let error = response.error
               this.modificationDialogVisiable = false
               this.$message({
                 type: 'error',
                 message: error.message,
                 showClose: true,
-                duration: 0
+                duration: 2 * 1000
               })
+            }
+          })
+          .catch((error) => {
+            this.modificationDialogVisiable = false
+            this.$message({
+              type: 'error',
+              message: error.message,
+              showClose: true,
+              duration: 2 * 1000
             })
-        })
+          })
       },
       initDeletion(row) {
         this.deletionForm.email = row.email
         this.deletionDialogVisiable = true
       },
       confirmDeletion() {
-        return new Promise((resolve, reject) => {
-          api.deleteUser(this.deletionForm)
-            .then((response) => {
-              let code = response.code
-              if (code === 0) {
-                this.deletionDialogVisiable = false
-                this.$message({
-                  type: 'success',
-                  message: '删除用户成功！',
-                  showClose: true,
-                  duration: 0
-                })
-                this.loading = true
-                this.getUsers()
-              } else if (code === 1){
-                reject(new Error('删除用户失败！'))
-              }
-            })
-            .catch((error) => {
+        api.deleteUser(this.deletionForm)
+          .then((response) => {
+            let code = response.code
+            if (code === 0) {
+              this.deletionDialogVisiable = false
+              this.$message({
+                type: 'success',
+                message: '删除用户成功！',
+                showClose: true,
+                duration: 2 * 1000
+              })
+              this.loading = true
+              this.getUsers()
+            } else {
+              let error = response.error
               this.deletionDialogVisiable = false
               this.$message({
                 type: 'error',
                 message: error.message,
                 showClose: true,
-                duration: 0
+                duration: 2 * 1000
               })
+            }
+          })
+          .catch((error) => {
+            this.deletionDialogVisiable = false
+            this.$message({
+              type: 'error',
+              message: error.message,
+              showClose: true,
+              duration: 0
             })
-        })
+          })
       },
     },
     filters: {
@@ -439,7 +440,8 @@
           '1': '封禁'
         }
         return statusMap[status]
-      }
+      },
+      timeFilter
     }
   }
 </script>
