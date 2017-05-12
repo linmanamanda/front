@@ -22,7 +22,7 @@ export function fetch(options) {
           message: '网络错误，请稍后再试！',
           type: 'error',
           showClose: true,
-          duration: 0
+          duration: 2 * 1000
         })
       })
   })

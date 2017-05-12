@@ -20,7 +20,7 @@ export default {
    */
   updateInvitation(data) {
     return fetch({
-      url: '/invitations',
+      url: '/invitation',
       method: 'patch',
       data
     })
@@ -32,7 +32,7 @@ export default {
    */
   deleteInvitation(data) {
     return fetch({
-      url: '/invitations',
+      url: '/invitation',
       method: 'delete',
       data
     })

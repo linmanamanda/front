@@ -86,7 +86,7 @@
             <el-form-item label="标题">
               <span>{{ scope.row.title }}</span>
             </el-form-item>
-            <el-form-item label="发布时间">
+            <el-form-item label="相约时间">
               <span>{{ scope.row.time | timeFilter}}</span>
             </el-form-item>
             <el-form-item label="地点">
@@ -124,7 +124,7 @@
         align="center">
       </el-table-column>
       <el-table-column
-        label="发布时间"
+        label="相约时间"
         prop="time"
         width="210px"
         sortable
@@ -181,6 +181,80 @@
       :page-sizes="[5, 10]"
       :total="total">
     </el-pagination>
+
+    <!-- 修改相约信息对话栏 -->
+    <el-dialog
+      title="修改用户信息"
+      :visible="modificationDialogVisiable"
+      :show-close="false"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false">
+      <el-form
+        :model="modificationForm"
+        label-width="120px">
+        <el-form-item label="相约信息ID">
+          <el-input v-model="modificationForm.id" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="相约信息发布人">
+          <el-input v-model="modificationForm.createdBy" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="标题">
+          <el-input v-model="modificationForm.title"></el-input>
+        </el-form-item>
+        <el-form-item label="相约时间">
+          <el-input v-model="modificationForm.time"></el-input>
+        </el-form-item>
+        <el-form-item label="相约地点">
+            <el-input v-model="modificationForm.location"></el-input>
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-select v-model="modificationForm.status">
+            <el-option 
+              label="等待相约" 
+              :value="0">
+            </el-option>
+            <el-option 
+              label="相约成功" 
+              :value="1">
+            </el-option>
+            <el-option 
+              label="信息已过期" 
+              :value="2">
+            </el-option>
+            <el-option 
+              label="封禁" 
+              :value="3">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="相约内容">
+          <el-input 
+            type="textarea"
+            v-model="modificationForm.content"
+            :rows="5"
+            resize="none">
+          </el-input>
+        </el-form-item>
+      </el-form>    
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="confirmModification">确认修改</el-button>
+        <el-button @click="modificationDialogVisiable = false">取消</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog
+      title="注意"
+      :visible.sync="deletionDialogVisiable"
+      size="tiny"
+      :show-close="false"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false">
+      <span>是否确定删除此条相约信息？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="deletionDialogVisiable = false">取 消</el-button>
+        <el-button type="danger" @click="confirmDeletion">确 定</el-button>
+      </span>
+    </el-dialog>    
   </div>
 </template>
 
@@ -221,11 +295,17 @@
         data: [],
         deletionDialogVisiable: false,
         deletionForm: {
-
+          id: '',
         },
         modificationDialogVisiable: false,
         modificationForm: {
-
+          id: '',
+          createdBy: '',
+          title: '',
+          time: '',
+          location: '',
+          status: '',
+          content: '',
         },
         query: {
           title: '',
@@ -290,11 +370,89 @@
         this.getInvitations()
       },
       initModification(row) {
-
+        this.modificationDialogVisiable = true
+        this.modificationForm.id = row.id
+        this.modificationForm.createdBy = row.createdBy
+        this.modificationForm.title = row.title
+        this.modificationForm.time = row.time
+        this.modificationForm.location = row.location
+        this.modificationForm.status = row.status
+        this.modificationForm.content = row.content
+      },
+      confirmModification() {
+        api.updateInvitation(this.modificationForm) 
+          .then((response) => {
+            let code = response.code
+            if (code === 0) {
+              this.modificationDialogVisiable = false
+              this.$message({
+                type: 'success',
+                message: '修改相约信息成功！',
+                showClose: true,
+                duration: 2 * 1000
+              })
+              this.loading = true
+              this.getInvitations()
+            } else {
+              let error = response.error
+              this.modificationDialogVisiable = false
+              this.$message({
+                type: 'error',
+                message: error.message,
+                showClose: true,
+                duration: 2 * 1000
+              })
+            }
+          })
+          .catch((error) => {
+            this.modificationDialogVisiable = false
+            this.$message({
+              type: 'error',
+              message: error.message,
+              showClose: true,
+              duration: 2 * 1000
+            })
+          })
       },
       initDeletion(row) {
-
-      } 
+        this.deletionDialogVisiable = true
+        this.deletionForm.id = row.id
+      },
+      confirmDeletion() {
+        api.deleteInvitation(this.deletionForm)
+          .then((response) => {
+            let code = response.code
+            if (code === 0) {
+              this.deletionDialogVisiable = false
+              this.$message({
+                type: 'success',
+                message: '删除相约信息成功！',
+                showClose: true,
+                duration: 2 * 1000
+              })
+              this.loading = true
+              this.getInvitations()
+            } else {
+              let error = response.error
+              this.deletionDialogVisiable = false
+              this.$message({
+                type: 'error',
+                message: error.message,
+                showClose: true,
+                duration: 2 * 1000
+              })
+            }
+          })
+          .catch((error) => {
+            this.deletionDialogVisiable = false
+            this.$message({
+              type: 'error',
+              message: error.message,
+              showClose: true,
+              duration: 0
+            })
+          })
+      }, 
     },
     filters: {
       statusTypeFilter(status) {
