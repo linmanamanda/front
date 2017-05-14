@@ -93,7 +93,7 @@
               <span>{{ scope.row.location }}</span>
             </el-form-item>
             <el-form-item label="状态">
-              <span>{{ scope.row.status }}</span>
+              <span>{{ scope.row.status | statusFilter}}</span>
             </el-form-item>
             <el-form-item label="发布人">
               <span>{{ scope.row.createdBy }}</span>
@@ -113,7 +113,7 @@
       <el-table-column
         label="ID"
         prop="id"
-        width="70px"
+        width="75px"
         sortable
         align="center">
       </el-table-column>
@@ -202,7 +202,11 @@
           <el-input v-model="modificationForm.title"></el-input>
         </el-form-item>
         <el-form-item label="相约时间">
-          <el-input v-model="modificationForm.time"></el-input>
+          <el-date-picker
+            v-model="modificationForm.time"
+            type="datetime">
+          </el-date-picker>
+          <!-- <el-input v-model="modificationForm.time"></el-input> -->
         </el-form-item>
         <el-form-item label="相约地点">
             <el-input v-model="modificationForm.location"></el-input>
@@ -374,7 +378,7 @@
         this.modificationForm.id = row.id
         this.modificationForm.createdBy = row.createdBy
         this.modificationForm.title = row.title
-        this.modificationForm.time = row.time
+        this.modificationForm.time = timeFilter(row.time)
         this.modificationForm.location = row.location
         this.modificationForm.status = row.status
         this.modificationForm.content = row.content

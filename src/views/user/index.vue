@@ -1,6 +1,13 @@
 <template>
   <div class="user-view">
     <div class="filter-container">
+      <!-- ID搜索条件设置栏 -->
+      <el-input
+        v-model="query.id"
+        placeholder="ID" 
+        style="width: 100px;">
+      </el-input>
+
       <!-- 邮箱搜索条件设置栏 -->
       <el-input
         v-model="query.email"
@@ -72,8 +79,9 @@
 
       <el-table-column 
         prop="id"
-        label="序号" 
-        width="65px"
+        label="ID" 
+        width="75px"
+        sortable
         align="center">
         <template scope="scope">
           <span>{{ scope.row.id }}</span>
@@ -175,6 +183,9 @@
       <el-form
         :model="modificationForm"
         label-width="80px">
+        <el-form-item label="ID">
+          <el-input v-model="modificationForm.id" disabled></el-input>
+        </el-form-item>
         <el-form-item label="邮箱">
           <el-input v-model="modificationForm.email" disabled></el-input>
         </el-form-item>
@@ -234,18 +245,6 @@
 </template>
 
 <script>
-  // const mocklist = [
-  //   {
-  //     id: 1,
-  //     email: 'linmanamanda@gmail.com',
-  //     username: 'linman',
-  //     authority: '2',
-  //     status: '0',
-  //     updatedAt: '2017-05-04 19:18',
-  //     createdAt: '2017-05-04 19:18',
-  //   },
-  // ]
-
   import { timeFilter } from '@/filters'
   import api from '@/api/user'
 
@@ -260,12 +259,14 @@
         },
         modificationDialogVisiable: false,
         modificationForm: {
+          id: '',
           email: '',
           username: '',
           authority: '',
           status: '',
         },
         query: {
+          id: '',
           email: '',
           username: '',
           status: '',
@@ -325,11 +326,9 @@
         this.query.pageSize = size
         this.getUsers()
       },
-      handleDeletion() {
-
-      },
       initModification(row) {
         this.modificationDialogVisiable = true
+        this.modificationForm.id = row.id
         this.modificationForm.email = row.email
         this.modificationForm.username = row.username
         this.modificationForm.status = row.status

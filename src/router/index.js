@@ -6,7 +6,9 @@ import UserView from '@/views/user'
 import HomeView from '@/views/home'
 import InvitationView from '@/views/invitation'
 import ReplyView from '@/views/reply'
-import ReportView from '@/views/report'
+import ReportUserView from '@/views/report/ReportUserView'
+import ReportInvitationView from '@/views/report/ReportUserView'
+import ReportReplyView from '@/views/report/ReportUserView'
 import ChartView from '@/views/chart'
 import Layout from '@/views/layout/Layout'
 
@@ -51,9 +53,19 @@ export default new Router({
         component: ReplyView
       },
       {
-        path: 'reports',
-        name: 'report',
-        component: ReportView
+        path: 'reports/users',
+        name: 'report_user',
+        component: ReportUserView
+      },
+      {
+        path: 'reports/replys',
+        name: 'report_reply',
+        component: ReportReplyView
+      },
+      {
+        path: 'reports/invitations',
+        name: 'report_invitation',
+        component: ReportInvitationView
       },
       {
         path: 'charts',

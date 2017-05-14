@@ -1,12 +1,12 @@
 <template>
-  <div class="report-view">
+  <div class="report-invitation-view">
     
   </div>
 </template>
 
 <script>
   export default {
-    name: 'ReportView'
+    name: 'ReportInvitationView'
   }
 </script>
 
