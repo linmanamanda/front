@@ -1,5 +1,60 @@
 <template>
   <div class="report-user-view">
+    <div class="filter-container">
+      <!-- ID搜索条件设置栏 -->
+      <el-input
+        v-model="query.id"
+        placeholder="ID" 
+        style="width: 100px;"
+        class="filter-item">
+      </el-input>
+
+      <!-- 邮箱搜索条件设置栏 -->
+      <el-input
+        v-model="query.email"
+        placeholder="举报的用户邮箱" 
+        style="width: 200px;"
+        class="filter-item">
+      </el-input>
+
+      <!-- 举报原因搜索条件设置栏 -->
+      <el-input
+        v-model="query.reason" 
+        placeholder="举报原因" 
+        style="width: 150px;"
+        class="filter-item">
+      </el-input>
+
+      <!-- 状态搜索条件设置栏 -->
+      <el-select
+        v-model="query.status" 
+        clearable
+        placeholder="状态" 
+        style="width: 120px"
+        class="filter-item">
+        <el-option 
+          :value="0"
+          label="未处理">
+        </el-option>
+        <el-option 
+          :value="1"
+          label="已处理">
+        </el-option>
+      </el-select>
+
+      <el-button
+        @click="search" 
+        type="primary" 
+        icon="search"
+        class="filter-item">
+        搜索
+      </el-button>
+
+      <el-button 
+        type="primary" 
+        icon="document"
+        class="filter-item">导出</el-button>
+    </div>
     <!-- 评论信息展示表格栏 -->
     <el-table
       :data="data"
@@ -15,8 +70,8 @@
         align="center">
       </el-table-column>
       <el-table-column
-        label="举报的用户"
-        prop="user"
+        label="举报的用户邮箱"
+        prop="email"
         min-width="210px"
         align="center">
       </el-table-column>
@@ -41,7 +96,7 @@
         sortable
         width="180px"
         align="center">
-        <template scope="scope">{{scope.row.updatedAt}}</template>
+        <template scope="scope">{{scope.row.updatedAt | timeFilter}}</template>
       </el-table-column>
       <el-table-column 
         prop="createdAt"
@@ -49,7 +104,7 @@
         sortable
         width="180px"
         align="center">
-        <template scope="scope">{{scope.row.createdAt}}</template>
+        <template scope="scope">{{scope.row.createdAt | timeFilter}}</template>
       </el-table-column>
       <el-table-column
         label="操作"
@@ -59,7 +114,8 @@
           <el-button 
             type="warning" 
             size="small"
-            @click="initModification(scope.row)"
+            :disabled="scope.row.status === 1"
+            @click="initBan(scope.row)"
             >封禁</el-button>
           <el-button 
             type="danger" 
@@ -69,10 +125,50 @@
         </template>
       </el-table-column>
     </el-table>
+
+    <!-- 页面分页栏 -->
+    <el-pagination
+      layout="total, sizes, prev, pager, next, jumper"
+      @current-change="handlePageChange"
+      @size-change="handleSizeChange"
+      :current-page="query.currentPage"
+      :page-size="query.pageSize"
+      :page-sizes="[5, 10]"
+      :total="total">
+    </el-pagination>
+
+    <el-dialog
+      title="注意"
+      :visible.sync="banDialogVisiable"
+      size="tiny"
+      :show-close="false"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false">
+      <span>是否确定封禁此用户？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="banDialogVisiable = false">取 消</el-button>
+        <el-button type="danger" @click="confirmBan">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <el-dialog
+      title="注意"
+      :visible.sync="deletionDialogVisiable"
+      size="tiny"
+      :show-close="false"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false">
+      <span>是否确定删除此条举报用户信息？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="deletionDialogVisiable = false">取 消</el-button>
+        <el-button type="danger" @click="confirmDeletion">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+  import { timeFilter } from '@/filters'
   import api from '@/api/report'
 
   export default {
@@ -84,12 +180,16 @@
         deletionForm: {
           id: ''
         },
-        modificationDialogVisiable: false,
-        modificationForm: {
-          status: '',
+        banDialogVisiable: false,
+        banForm: {
           id: '',
+          userId: '',
         },
         query: {
+          id: '',
+          email: '',
+          reason: '',
+          status: '',
           pageSize: 5,
           currentPage: 1,
         },
@@ -145,21 +245,20 @@
         this.query.pageSize = size
         this.getUserReports()
       },
-      handleDeletion() {
-
+      initBan(row) {
+        this.banDialogVisiable = true
+        this.banForm.id = row.id
+        this.banForm.userId = row.userId
       },
-      initModification(row) {
-        this.modificationDialogVisiable = true
-      },
-      confirmModification() {
-        api.updateUserReport(this.modificationForm) 
+      confirmBan() {
+        api.banUser(this.banForm) 
           .then((response) => {
             let code = response.code
             if (code === 0) {
-              this.modificationDialogVisiable = false
+              this.banDialogVisiable = false
               this.$message({
                 type: 'success',
-                message: '修改用户信息成功！',
+                message: '封禁用户成功！',
                 showClose: true,
                 duration: 2 * 1000
               })
@@ -167,7 +266,7 @@
               this.getUserReports()
             } else {
               let error = response.error
-              this.modificationDialogVisiable = false
+              this.banDialogVisiable = false
               this.$message({
                 type: 'error',
                 message: error.message,
@@ -177,7 +276,7 @@
             }
           })
           .catch((error) => {
-            this.modificationDialogVisiable = false
+            this.banDialogVisiable = false
             this.$message({
               type: 'error',
               message: error.message,
@@ -187,18 +286,18 @@
           })
       },
       initDeletion(row) {
-        this.deletionForm.email = row.email
+        this.deletionForm.id = row.id
         this.deletionDialogVisiable = true
       },
       confirmDeletion() {
-        api.deleteUser(this.deletionForm)
+        api.deleteUserReport(this.deletionForm)
           .then((response) => {
             let code = response.code
             if (code === 0) {
               this.deletionDialogVisiable = false
               this.$message({
                 type: 'success',
-                message: '删除用户成功！',
+                message: '删除举报用户信息成功！',
                 showClose: true,
                 duration: 2 * 1000
               })
@@ -241,10 +340,7 @@
         }
         return statusMap[status]
       },
+      timeFilter,
     }
   }
 </script>
-
-<style lang="stylus" scoped>
-  
-</style>

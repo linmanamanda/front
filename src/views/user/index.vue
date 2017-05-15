@@ -5,21 +5,24 @@
       <el-input
         v-model="query.id"
         placeholder="ID" 
-        style="width: 100px;">
+        style="width: 100px;"
+        class="filter-item">
       </el-input>
 
       <!-- 邮箱搜索条件设置栏 -->
       <el-input
         v-model="query.email"
         placeholder="邮箱" 
-        style="width: 200px;">
+        style="width: 200px;"
+        class="filter-item">
       </el-input>
 
       <!-- 用户名搜索条件设置栏 -->
       <el-input
         v-model="query.username" 
         placeholder="用户名" 
-        style="width: 150px;">
+        style="width: 150px;"
+        class="filter-item">
       </el-input>
 
       <!-- 权限搜索条件设置栏 -->
@@ -27,7 +30,8 @@
         v-model="query.authority" 
         clearable
         placeholder="权限" 
-        style="width: 120px">
+        style="width: 120px"
+        class="filter-item">
         <el-option 
           :value="0" 
           label="普通用户">
@@ -47,7 +51,8 @@
         v-model="query.status" 
         clearable
         placeholder="状态" 
-        style="width: 120px">
+        style="width: 120px"
+        class="filter-item">
         <el-option 
           :value="0"
           label="正常状态">
@@ -61,11 +66,15 @@
       <el-button
         @click="search" 
         type="primary" 
-        icon="search">
+        icon="search"
+        class="filter-item">
         搜索
       </el-button>
 
-      <el-button type="primary" icon="document">导出</el-button>
+      <el-button 
+        type="primary" 
+        icon="document"
+        class="filter-item">导出</el-button>
     </div>
 
     <!-- 用户信息展示表格栏 -->
@@ -444,11 +453,3 @@
     }
   }
 </script>
-
-<style lang="stylus" scoped>
-  .filter-container
-    margin-bottom 15px
-  .el-pagination
-    padding 0
-    margin-top 15px
-</style>

@@ -1,39 +1,52 @@
 <template>
   <div class="invitation-view">
     <div class="filter-container">
+      <!-- ID搜索条件设置栏 -->
+      <el-input
+        v-model="query.id"
+        placeholder="ID" 
+        style="width: 100px;"
+        class="filter-item">
+      </el-input>
+
       <!-- 标题搜索条件设置栏 -->
       <el-input
         v-model="query.title"
         placeholder="标题" 
-        style="width: 200px;">
+        style="width: 200px;"
+        class="filter-item">
       </el-input>
 
       <!-- 相约地点搜索条件设置栏 -->
       <el-input
         v-model="query.location" 
         placeholder="相约地点" 
-        style="width: 150px;">
+        style="width: 150px;"
+        class="filter-item">
       </el-input>
 
       <!-- 相约开始时间搜索条件设置栏 -->
       <el-date-picker
         v-model="query.begintime"
         type="datetime"
-        placeholder="发布开始时间">
+        placeholder="发布开始时间"
+        class="filter-item">
       </el-date-picker>
 
       <!-- 相约结束时间搜索条件设置栏 -->
       <el-date-picker
         v-model="query.endtime"
         type="datetime"
-        placeholder="发布结束时间">
+        placeholder="发布结束时间"
+        class="filter-item">
       </el-date-picker>
 
       <!-- 发布人搜索条件设置栏 -->
       <el-input
         v-model="query.createdBy" 
         placeholder="发布人" 
-        style="width: 150px;">
+        style="width: 150px;"
+        class="filter-item">
       </el-input>
 
       <!-- 状态搜索条件设置栏 -->
@@ -41,7 +54,8 @@
         v-model="query.status" 
         clearable
         placeholder="状态" 
-        style="width: 120px">
+        style="width: 120px"
+        class="filter-item">
         <el-option 
           :value="0"
           label="等待相约">
@@ -63,11 +77,12 @@
       <el-button
         @click="search" 
         type="primary" 
-        icon="search">
+        icon="search"
+        class="filter-item">
         搜索
       </el-button>
 
-      <el-button type="primary" icon="document">导出</el-button>
+      <el-button type="primary" icon="document" class="filter-item">导出</el-button>
     </div>
 
     <!-- 相约信息展示表格栏 -->
@@ -312,6 +327,7 @@
           content: '',
         },
         query: {
+          id: '',
           title: '',
           begintime: '',
           endtime: '',
@@ -472,8 +488,8 @@
         const statusMap = {
           '0': '等待相约',
           '1': '相约成功',
-          '3': '信息已过期',
-          '4': '封禁',
+          '2': '信息已过期',
+          '3': '封禁',
         }
         return statusMap[status]
       },
@@ -481,20 +497,3 @@
     },
   }
 </script>
-
-<style lang="stylus">
-  .filter-container
-    margin-bottom 15px
-  .el-pagination
-    padding 0
-    margin-top 15px
-  .invitation-table-expand
-    font-size 0
-    label
-      width 100px
-      color #99a9bf
-    .el-form-item
-      margin-right 0 !important
-      margin-bottom 0
-      width 50%
-</style>

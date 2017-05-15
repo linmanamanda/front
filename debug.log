@@ -843,3 +843,15 @@
 [0514/165925.676:ERROR:process_reader_win.cc(233)] ReadMemory at 0x6f3000 of 53248 bytes failed: 仅完成部分的 ReadProcessMemory 或 WriteProcessMemory 请求。 (0x12B)
 [0514/165925.676:ERROR:crash_report_exception_handler.cc(111)] WriteEverything failed
 [0514/165925.677:ERROR:scoped_process_suspend.cc(38)] NtResumeProcess: 已尝试访问正在退出的过程。  (0xc000010a)
+[0514/233725.828:ERROR:process_reader_win.cc(233)] ReadMemory at 0xf90048 of 32768 bytes failed: 仅完成部分的 ReadProcessMemory 或 WriteProcessMemory 请求。 (0x12B)
+[0514/233725.828:ERROR:process_reader_win.cc(233)] ReadMemory at 0x56f0048 of 32768 bytes failed: 仅完成部分的 ReadProcessMemory 或 WriteProcessMemory 请求。 (0x12B)
+[0514/233725.828:WARNING:pe_image_annotations_reader.cc(65)] could not read simple annotations from C:\Program Files (x86)\Google\Chrome\Application\57.0.2987.98\chrome_elf.dll
+[0514/233725.828:WARNING:pe_image_annotations_reader.cc(65)] could not read simple annotations from C:\Program Files (x86)\Google\Chrome\Application\57.0.2987.98\chrome_elf.dll
+[0514/233726.208:ERROR:process_reader_win.cc(233)] ReadMemory at 0x1260048 of 32768 bytes failed: 仅完成部分的 ReadProcessMemory 或 WriteProcessMemory 请求。 (0x12B)
+[0514/233726.208:WARNING:pe_image_annotations_reader.cc(65)] could not read simple annotations from C:\Program Files (x86)\Google\Chrome\Application\57.0.2987.98\chrome_elf.dll
+[0514/233726.208:ERROR:process_reader_win.cc(233)] ReadMemory at 0x1290048 of 32768 bytes failed: 仅完成部分的 ReadProcessMemory 或 WriteProcessMemory 请求。 (0x12B)
+[0514/233726.208:WARNING:pe_image_annotations_reader.cc(65)] could not read simple annotations from C:\Program Files (x86)\Google\Chrome\Application\57.0.2987.98\chrome_elf.dll
+[0515/142646.639:ERROR:process_reader_win.cc(142)] SuspendThread: 拒绝访问。 (0x5)
+[0515/142646.786:ERROR:process_reader_win.cc(233)] ReadMemory at 0x57e0048 of 32768 bytes failed: 仅完成部分的 ReadProcessMemory 或 WriteProcessMemory 请求。 (0x12B)
+[0515/142646.787:WARNING:pe_image_annotations_reader.cc(65)] could not read simple annotations from C:\Program Files (x86)\Google\Chrome\Application\57.0.2987.98\chrome_elf.dll
+[0515/184144.649:ERROR:exception_handler_server.cc(524)] ConnectNamedPipe: 管道正在被关闭。 (0xE8)
