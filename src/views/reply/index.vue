@@ -1,5 +1,57 @@
 <template>
   <div class="reply-view">
+    <div class="filter-container">
+      <!-- ID搜索条件设置栏 -->
+      <el-input
+        v-model="query.id"
+        placeholder="ID" 
+        style="width: 100px;"
+        class="filter-item">
+      </el-input>
+
+      <!-- 标题搜索条件设置栏 -->
+      <el-input
+        v-model="query.title"
+        placeholder="标题" 
+        style="width: 200px;"
+        class="filter-item">
+      </el-input>
+
+      <!-- 评论人搜索条件设置栏 -->
+      <el-input
+        v-model="query.repliedFrom" 
+        placeholder="评论人" 
+        style="width: 150px;"
+        class="filter-item">
+      </el-input>
+
+      <!-- 状态搜索条件设置栏 -->
+      <el-select
+        v-model="query.status" 
+        clearable
+        placeholder="状态" 
+        style="width: 120px"
+        class="filter-item">
+        <el-option 
+          :value="0"
+          label="正常">
+        </el-option>
+        <el-option 
+          :value="1"
+          label="封禁">
+        </el-option>
+      </el-select>
+
+      <el-button
+        @click="search" 
+        type="primary" 
+        icon="search"
+        class="filter-item">
+        搜索
+      </el-button>
+
+      <!-- <el-button type="primary" icon="document" class="filter-item">导出</el-button> -->
+    </div>
     <!-- 评论信息展示表格栏 -->
     <el-table
       :data="data"
@@ -80,6 +132,17 @@
         </template>
       </el-table-column>
     </el-table>
+
+    <!-- 页面分页栏 -->
+    <el-pagination
+      layout="total, sizes, prev, pager, next, jumper"
+      @current-change="handlePageChange"
+      @size-change="handleSizeChange"
+      :current-page="query.currentPage"
+      :page-size="query.pageSize"
+      :page-sizes="[5, 10]"
+      :total="total">
+    </el-pagination>
   </div>
 </template>
 
@@ -136,6 +199,10 @@
 
         },
         query: {
+          id: '',
+          title: '',
+          repliedFrom: '',
+          status: '',
           currentPage: 1,
           pageSize: 5,
         },

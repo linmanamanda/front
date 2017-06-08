@@ -1,6 +1,8 @@
 <template>
   <div class="layout" :class="{ 'hide-sidebar': isClosed }">
     <div class="sidebar-container" >
+      <h1 class="slogan" v-show="!isClosed">“来相约”系统服务端</h1>
+      <h1 class="slogan__close slogan" v-show="isClosed">约</h1>
       <SideBar class="sidebar"></SideBar>
     </div>
     <div class="main-container">
@@ -52,6 +54,12 @@
       overflow hidden
       background-color #324157
       transition all .28s ease-out
+    .slogan
+      padding 10px 15px
+      color #fff
+      font-size 16px
+    .slogan__close
+      text-align right
     .sidebar
       transition all .28s ease-out
     .main-container

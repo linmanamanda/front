@@ -12,7 +12,7 @@
       </span>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item command="home">首页</el-dropdown-item>
-        <el-dropdown-item command="setting">设置</el-dropdown-item>
+        <!-- <el-dropdown-item command="setting">设置</el-dropdown-item> -->
         <el-dropdown-item divided command="logout">退出登录</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
@@ -42,9 +42,9 @@
           case 'home':
             this.$router.push({ path: '/administrations/homes' })
             break
-          case 'setting':
-            break
-            this.$router.push({ path: '/administrations/settings' })
+          // case 'setting':
+          //   break
+          //   this.$router.push({ path: '/administrations/settings' })
         }
       },
       logout() {

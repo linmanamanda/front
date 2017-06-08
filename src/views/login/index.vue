@@ -5,7 +5,7 @@
       :rules="loginRules"
       ref="loginForm"
       class="login-form">
-      <h3 class="title">系统登录</h3>
+      <h3 class="title">“来相约”系统服务端登录</h3>
       <el-form-item prop="email">
         <i class="iconfont icon-mail_fill"></i>
         <el-input 
@@ -44,8 +44,8 @@ export default {
 		return {
       // 登录表单域
 			loginForm: {
-				email: 'linmanamanda@gmail.com',
-				password: 'linman2491'
+				email: '',
+				password: ''
 			},
 
       // 登录表单域验证规则
@@ -68,7 +68,6 @@ export default {
           }
         ]
       },
-
       loading: false,
 		}
 	},

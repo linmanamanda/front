@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
-import router from '../router'
 import store from '../store'
 
 export function fetch(options) {
